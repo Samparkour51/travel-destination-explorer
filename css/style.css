@@ -1,0 +1,26 @@
+/* Hero Section Background */
+.hero-section {
+  min-height: 90vh;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("https://images.pexels.com/photos/2325446/pexels-photo-2325446.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Ensure footer sticks to bottom on short pages */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+footer {
+  margin-top: auto;
+}
+
+/* Sufficient color contrast for readability */
+.bg-opacity-50 {
+  --bs-bg-opacity: 0.7;
+}
