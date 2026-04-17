@@ -178,79 +178,152 @@ function initContactForm() {
   const emailInput = document.getElementById("email");
   const messageInput = document.getElementById("message");
   const formMessage = document.getElementById("formMessage");
+  const charCount = document.getElementById("charCount");
 
-  // Real-time validation
-  function validateField(input, validationFn, errorMsg) {
-    const errorElement = document.getElementById(`${input.id}Error`);
-    const isValid = validationFn(input.value);
+  // Prevent form from submitting on Enter key
+  form.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+      e.preventDefault();
+      return false;
+    }
+  });
 
-    if (!isValid && input.value.length > 0) {
-      input.classList.add("is-invalid");
-      input.classList.remove("is-valid");
-      errorElement.textContent = errorMsg;
-    } else if (isValid && input.value.length > 0) {
-      input.classList.add("is-valid");
-      input.classList.remove("is-invalid");
-      errorElement.textContent = "";
+  // Update character count
+  messageInput.addEventListener("input", () => {
+    const length = messageInput.value.length;
+    if (charCount) {
+      charCount.textContent = length;
+      charCount.style.color = length >= 10 ? "green" : "#dc3545";
+    }
+  });
+
+  // Real-time validation function
+  function validateField(input, validationFn, errorElementId, errorMsg) {
+    const errorElement = document.getElementById(errorElementId);
+    const value = input.value.trim();
+    const isValid = validationFn(value);
+
+    if (value.length > 0) {
+      if (!isValid) {
+        input.classList.add("is-invalid");
+        input.classList.remove("is-valid");
+        if (errorElement) errorElement.textContent = errorMsg;
+      } else {
+        input.classList.add("is-valid");
+        input.classList.remove("is-invalid");
+        if (errorElement) errorElement.textContent = "";
+      }
     } else {
       input.classList.remove("is-valid", "is-invalid");
-      errorElement.textContent = "";
+      if (errorElement) errorElement.textContent = "";
     }
 
     return isValid;
   }
 
-  // Validation rules
-  nameInput?.addEventListener("input", () => {
+  // Name validation (min 2 chars)
+  nameInput.addEventListener("input", () => {
     validateField(
       nameInput,
-      (val) => val.trim().length >= 2,
+      (val) => val.length >= 2,
+      "nameError",
       "Name must be at least 2 characters",
     );
   });
 
-  emailInput?.addEventListener("input", () => {
+  // Email validation
+  emailInput.addEventListener("input", () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     validateField(
       emailInput,
       (val) => emailRegex.test(val),
-      "Please enter a valid email address",
+      "emailError",
+      "Please enter a valid email address (e.g., name@domain.com)",
     );
   });
 
-  messageInput?.addEventListener("input", () => {
+  // Message validation (min 10 chars)
+  messageInput.addEventListener("input", () => {
     validateField(
       messageInput,
-      (val) => val.trim().length >= 10,
+      (val) => val.length >= 10,
+      "messageError",
       "Message must be at least 10 characters",
     );
   });
 
-  // Form submission
+  // Form submission - FIXED
   form.addEventListener("submit", (e) => {
+    // CRITICAL: Prevent page refresh
     e.preventDefault();
+    e.stopPropagation();
 
-    const isNameValid = nameInput.value.trim().length >= 2;
-    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
-    const isMessageValid = messageInput.value.trim().length >= 10;
+    const nameValue = nameInput.value.trim();
+    const emailValue = emailInput.value.trim();
+    const messageValue = messageInput.value.trim();
 
+    const isNameValid = nameValue.length >= 2;
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
+    const isMessageValid = messageValue.length >= 10;
+
+    // Force validation display
+    if (!isNameValid) {
+      nameInput.classList.add("is-invalid");
+      document.getElementById("nameError").textContent =
+        "Name must be at least 2 characters";
+    } else {
+      nameInput.classList.add("is-valid");
+      nameInput.classList.remove("is-invalid");
+    }
+
+    if (!isEmailValid) {
+      emailInput.classList.add("is-invalid");
+      document.getElementById("emailError").textContent =
+        "Please enter a valid email address";
+    } else {
+      emailInput.classList.add("is-valid");
+      emailInput.classList.remove("is-invalid");
+    }
+
+    if (!isMessageValid) {
+      messageInput.classList.add("is-invalid");
+      document.getElementById("messageError").textContent =
+        "Message must be at least 10 characters";
+    } else {
+      messageInput.classList.add("is-valid");
+      messageInput.classList.remove("is-invalid");
+    }
+
+    // Check all validations
     if (isNameValid && isEmailValid && isMessageValid) {
+      // Show success message
       formMessage.innerHTML = `
-                <div class="alert alert-success">
-                    ✅ Thank you! Your message has been sent successfully.
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>✅ Thank you, ${nameValue}!</strong> Your message has been sent successfully, you will recieve an email from us shortly.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             `;
+
+      // Reset form
       form.reset();
-      document
-        .querySelectorAll(".is-valid")
-        .forEach((el) => el.classList.remove("is-valid"));
+      if (charCount) {
+        charCount.textContent = "0";
+        charCount.style.color = "#dc3545";
+      }
+      document.querySelectorAll(".is-valid, .is-invalid").forEach((el) => {
+        el.classList.remove("is-valid", "is-invalid");
+      });
     } else {
+      // Show error message
       formMessage.innerHTML = `
-                <div class="alert alert-danger">
-                    ❌ Please fix the errors above before submitting.
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>❌ Please fix the errors above</strong> before submitting.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             `;
     }
+
+    return false; // Extra safety
   });
 }
 
@@ -259,36 +332,172 @@ function initDetailsPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const destId = parseInt(urlParams.get("id"));
 
-  if (!destId) return;
+  if (!destId) {
+    window.location.href = "destinations.html";
+    return;
+  }
 
   const destination = destinations.find((d) => d.id === destId);
-  if (!destination) return;
+  if (!destination) {
+    window.location.href = "destinations.html";
+    return;
+  }
 
+  // Image galleries for each destination (carousel images)
+  const imageGalleries = {
+    1: [
+      // Bali, Indonesia
+      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1573790385845-5c53bcf5a209?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1583341611849-4f8e4c6bb74e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    ],
+    2: [
+      // Swiss Alps, Switzerland
+      "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1527668752968-14dc70a27c95?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1544992458-5b22a4ed7c7d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1491555103944-7c647fd857e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    ],
+    3: [
+      // Tokyo, Japan
+      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1582654454409-778f6619ddc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    ],
+    4: [
+      // Santorini, Greece
+      "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1580502304784-8985b7eb7260?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1503153181849-4e2f03f688e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    ],
+    5: [
+      // Banff, Canada
+      "https://images.unsplash.com/photo-1536627217140-899b0adc825e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1519085362767-1f90a5e95b1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1502657877623-f66bf489d236?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1602525962574-3bc829fbed1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1619831330663-51f60a36b4e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    ],
+    6: [
+      // Paris, France
+      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1541625818814-9b3c6c2b4e9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1511739001486-6fc10a37d2f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    ],
+  };
+
+  // Populate destination details
   document.getElementById("destName").textContent =
     `${destination.name}, ${destination.country}`;
+  document.getElementById("destWeather").textContent = destination.weather;
+  document.getElementById("destBestTime").textContent = destination.bestTime;
+  document.getElementById("destBudget").textContent = destination.budget;
+  document.getElementById("destDescription").textContent =
+    destination.description;
+  document.getElementById("destLocation").textContent =
+    `${destination.name}, ${destination.country}`;
+
+  // Populate attractions list
+  const attractionsList = document.getElementById("destAttractions");
+  attractionsList.innerHTML = "";
+  destination.attractions.forEach((attraction) => {
+    const li = document.createElement("li");
+    li.className = "list-group-item";
+    li.innerHTML = `✅ ${attraction}`;
+    attractionsList.appendChild(li);
+  });
+
+  // Carousel build
+  const galleryImages = imageGalleries[destId] || [destination.image];
+  const carouselInner = document.getElementById("carouselInner");
+  const carouselIndicators = document.getElementById("carouselIndicators");
+
+  carouselInner.innerHTML = "";
+  carouselIndicators.innerHTML = "";
+
+  galleryImages.forEach((imgSrc, index) => {
+    // Create indicator
+    const indicator = document.createElement("button");
+    indicator.type = "button";
+    indicator.setAttribute("data-bs-target", "#destinationCarousel");
+    indicator.setAttribute("data-bs-slide-to", index);
+    indicator.setAttribute("aria-label", `Slide ${index + 1}`);
+    if (index === 0) {
+      indicator.classList.add("active");
+      indicator.setAttribute("aria-current", "true");
+    }
+    carouselIndicators.appendChild(indicator);
+
+    // Create carousel item
+    const item = document.createElement("div");
+    item.className = `carousel-item ${index === 0 ? "active" : ""}`;
+    item.innerHTML = `
+            <img src="${imgSrc}" class="d-block w-100" alt="${destination.name}" style="height: 450px; object-fit: cover;">
+        `;
+    carouselInner.appendChild(item);
+  });
+  // Interactive map URLs for each destination
+  const mapUrls = {
+    1: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63141.83511707475!2d115.13843245!3d-8.4095178!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd22f7520fca7d3%3A0x2872b62cc456cd84!2sBali%2C%20Indonesia!5e0!3m2!1sen!2sde!4v1712345678901",
+    2: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d175526.1473913088!2d7.6500765!3d46.818188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x478fa2b0b6d72e2d%3A0x5431e9d56a41a0af!2sSwiss%20Alps!5e0!3m2!1sen!2sde!4v1712345678902",
+    3: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d207446.97307138377!2d139.60078265!3d35.6681625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188b857628235d%3A0xcdd8aef709a2b520!2sTokyo%2C%20Japan!5e0!3m2!1sen!2sde!4v1712345678903",
+    4: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25681.97746400855!2d25.42860795!3d36.3931562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1499cdce05e3b0f9%3A0x180cfa0ea68e8e7!2sSantorini%2C%20Greece!5e0!3m2!1sen!2sde!4v1712345678904",
+    5: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d159514.3422278688!2d-115.68682645!3d51.1783629!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5370ca45910c4afd%3A0xca4d6d6f7c4e8f8!2sBanff%2C%20AB%2C%20Canada!5e0!3m2!1sen!2sde!4v1712345678905",
+    6: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d83998.9185124463!2d2.347035!3d48.8588548!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2sParis%2C%20France!5e0!3m2!1sen!2sde!4v1712345678906",
+  };
+
+  const mapIframe = document.getElementById("destMap");
+  const locationText = document.getElementById("destLocation");
+
+  if (mapIframe && mapUrls[destId]) {
+    mapIframe.src = mapUrls[destId];
+    if (locationText) {
+      locationText.textContent = `📍 ${destination.name}, ${destination.country}`;
+    }
+  }
 }
 
 // INITIALIZE PAGE
 document.addEventListener("DOMContentLoaded", function () {
-  // Check current page
-  const isDestinationsPage = document.getElementById("destinationsContainer");
-  const isContactPage = document.getElementById("contactForm");
+  console.log("Page loaded - initializing...");
+
+  // Check which page we're on
+  const destinationsContainer = document.getElementById(
+    "destinationsContainer",
+  );
+  const contactForm = document.getElementById("contactForm");
   const isDetailsPage = window.location.pathname.includes("details.html");
 
-  if (isDestinationsPage) {
+  console.log("Destinations container found:", !!destinationsContainer);
+  console.log("Contact form found:", !!contactForm);
+  console.log("Details page:", isDetailsPage);
+
+  if (destinationsContainer) {
+    console.log("Rendering destinations...");
+    console.log("Destinations array length:", destinations.length);
     renderDestinations();
     initFilterButtons();
   }
 
-  if (isContactPage) {
+  if (contactForm) {
+    console.log("Initializing contact form...");
     initContactForm();
   }
 
   if (isDetailsPage) {
+    console.log("Initializing details page...");
     initDetailsPage();
   }
 });
-
 // hover effect CSS dynamically
 const style = document.createElement("style");
 style.textContent = `
