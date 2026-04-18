@@ -10,7 +10,7 @@ const destinations = [
     image:
       "https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=600",
     bestTime: "April - October",
-    budget: "$800 - $1500",
+    budget: "€800 - €1500",
     attractions: [
       "Uluwatu Temple",
       "Tegallalang Rice Terraces",
@@ -29,7 +29,7 @@ const destinations = [
     image:
       "https://images.pexels.com/photos/869258/pexels-photo-869258.jpeg?auto=compress&cs=tinysrgb&w=600",
     bestTime: "December - March (Skiing), June - September (Hiking)",
-    budget: "$1500 - $3000",
+    budget: "€1500 - €3000",
     attractions: ["Matterhorn", "Jungfraujoch", "Lake Geneva", "Interlaken"],
   },
   {
@@ -43,7 +43,7 @@ const destinations = [
     image:
       "https://images.pexels.com/photos/1510595/pexels-photo-1510595.jpeg?auto=compress&cs=tinysrgb&w=600",
     bestTime: "March - May (Cherry Blossom), October - November",
-    budget: "$1200 - $2500",
+    budget: "€1200 - €2500",
     attractions: [
       "Shibuya Crossing",
       "Senso-ji Temple",
@@ -62,7 +62,7 @@ const destinations = [
     image:
       "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     bestTime: "May - October",
-    budget: "$1000 - $2000",
+    budget: "€1000 - €2000",
     attractions: ["Oia Sunset", "Red Beach", "Ancient Akrotiri", "Fira Town"],
   },
   {
@@ -76,7 +76,7 @@ const destinations = [
     image:
       "https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=600",
     bestTime: "June - August (Hiking), December - March (Skiing)",
-    budget: "$900 - $1800",
+    budget: "€900 - €1800",
     attractions: [
       "Lake Louise",
       "Moraine Lake",
@@ -94,7 +94,7 @@ const destinations = [
     image:
       "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     bestTime: "April - June, September - October",
-    budget: "$1300 - $2800",
+    budget: "€1300 - €2800",
     attractions: ["Eiffel Tower", "Louvre Museum", "Notre-Dame", "Montmartre"],
   },
 ];
@@ -111,7 +111,7 @@ function renderDestinations(filterCategory = "all") {
       ? destinations
       : destinations.filter((dest) => dest.category === filterCategory);
 
-  // Generate HTML for each destination
+  // HTML for each destination
   filteredDestinations.forEach((dest) => {
     const cardCol = document.createElement("div");
     cardCol.className = "col-md-6 col-lg-4";
@@ -252,9 +252,8 @@ function initContactForm() {
     );
   });
 
-  // Form submission - FIXED
+  // Form submission
   form.addEventListener("submit", (e) => {
-    // CRITICAL: Prevent page refresh
     e.preventDefault();
     e.stopPropagation();
 
@@ -266,7 +265,7 @@ function initContactForm() {
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
     const isMessageValid = messageValue.length >= 10;
 
-    // Force validation display
+    //validation display
     if (!isNameValid) {
       nameInput.classList.add("is-invalid");
       document.getElementById("nameError").textContent =
@@ -323,7 +322,7 @@ function initContactForm() {
             `;
     }
 
-    return false; // Extra safety
+    return false;
   });
 }
 
@@ -412,7 +411,7 @@ function initDetailsPage() {
   destination.attractions.forEach((attraction) => {
     const li = document.createElement("li");
     li.className = "list-group-item";
-    li.innerHTML = `✅ ${attraction}`;
+    li.innerHTML = `⏺ ${attraction}`;
     attractionsList.appendChild(li);
   });
 

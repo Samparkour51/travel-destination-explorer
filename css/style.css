@@ -9,7 +9,6 @@
   background-attachment: fixed;
 }
 
-/* Ensure footer sticks to bottom on short pages */
 body {
   display: flex;
   flex-direction: column;
@@ -20,13 +19,11 @@ footer {
   margin-top: auto;
 }
 
-/* Sufficient color contrast for readability */
 .bg-opacity-50 {
   --bs-bg-opacity: 0.7;
 }
 /* DESTINATIONS PAGE STYLES */
 
-/* Filter button styles */
 .filter-btn {
   min-width: 100px;
   transition: all 0.3s ease;
@@ -37,7 +34,6 @@ footer {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Card image hover effect */
 .card-img-top {
   transition: transform 0.3s ease;
 }
@@ -58,7 +54,6 @@ main {
 }
 /* CONTACT PAGE STYLES */
 
-/* Form validation styles */
 .form-control.is-valid {
   border-color: #198754;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
@@ -75,13 +70,11 @@ main {
   background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
 }
 
-/* Character counter */
 #charCount {
   font-weight: 600;
   transition: color 0.3s ease;
 }
 
-/* Card shadow enhancement */
 .card {
   border: none;
 }
