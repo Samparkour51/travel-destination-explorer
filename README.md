@@ -2,15 +2,15 @@
 
 A responsive, interactive travel website built for the CO2 Retake Exam.
 
-## 🌍 Live Website
+## Live Website
 
 **[View Live Site](https://samparkour51.github.io/travel-destination-explorer/)**
 
-## 📝 Project Description
+## Project Description
 
 Interactive travel destination explorer allowing users to search, filter, and view detailed information about various travel locations worldwide. Built as a single-page-style application with multiple HTML pages.
 
-## ✨ Key Features
+## Key Features
 
 - **Home Page:** Hero section with image background and search bar
 - **Destinations Page:** Responsive grid of 6 destinations with filter options (Beaches, Mountains, Cities)
@@ -27,7 +27,7 @@ Interactive travel destination explorer allowing users to search, filter, and vi
 - **Responsive Design:** Fully responsive across mobile, tablet, and desktop
 - **Accessible:** ARIA labels, semantic HTML, sufficient color contrast
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 | Technology | Purpose |  
 |VS studio | AI Agent, for code assistance |  
@@ -38,7 +38,7 @@ Interactive travel destination explorer allowing users to search, filter, and vi
 | GitHub Pages | Deployment and hosting |
 | Pexels/Unsplash | High-quality destination imagery |
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 
@@ -56,7 +56,53 @@ travel-destination-explorer/
 
 ```
 
-## 🔍 Cross-Browser Compatibility
+## wireframe sketches
+
+**Home page**
+
+| LOGO Home Destinations Contact |
+| |
+| [ Background Image ] |
+| |
+| |---------------------| |
+| | Discover Your | |
+| | Next Journey | |
+| | [ Search Bar ] [Go] | |
+| |---------------------| |
+| | | Footer Text |
+
+**Destinations page**
+
+| LOGO Home [Destinations] Contact |
+
+| [All] [Beaches] [Mountains] [Cities] |
+
+| |-------| |-------| |-------| |
+| | IMG | | IMG | | IMG | |
+| | city | | beach | | mountain| |
+| | xx°C | | xx°C | | xx°C | |
+| | Info | | Info | | Info | |
+| |-------| |-------| |-------| |
+| |
+| |-------| |-------| |-------| |  
+| | IMG | | IMG | | IMG | |
+| |-------| |-------| |-------| |
+
+**details page**
+
+| LOGO Home Destinations Contact |
+
+| [ Carousel Images ] |
+| < O O > |
+
+| Best Time: ---- | [Google Map ] |
+| Budget:€money | |
+| Attractions: | |
+| _ place1 | |
+| _ place2 | |
+| [ Back to Search ] | |
+
+## Cross-Browser Compatibility
 
 | Browser         | Version | Status           |
 | :-------------- | :------ | :--------------- |
@@ -65,7 +111,7 @@ travel-destination-explorer/
 
 No significant rendering differences were observed. Bootstrap's cross-browser compatibility ensures consistent behavior.
 
-## 📝 Reflection Summary
+## Reflection Summary
 
 Reflection on my Travel Destination Explorer Project
 
